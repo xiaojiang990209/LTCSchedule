@@ -74,8 +74,6 @@ public class MapsActivity extends FragmentActivity
             @Override
             public void onClick(View v) {
                 accessNearbyBusStops(mMap.getCameraPosition().target);
-                //appendResultToTextView(busStops);
-
             }
         });
         routeDatabase = new RouteDatabase(this).createDatabase();
@@ -241,7 +239,7 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        textView.setText(textView.getText() + "onConnected:\n");
+        textView.append("onConnected:\n");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(1000);
@@ -281,12 +279,7 @@ public class MapsActivity extends FragmentActivity
             //When hearing back from the server, parse the JSON response.
             @Override
             public void onResponse(String response) {
-                textView.setText(textView.getText() + "Parsing json response...\n");
-                try {
-                    Thread.sleep(3000);
-                }catch(InterruptedException e) {
-                    e.printStackTrace();
-                }
+                textView.append("Parsing json response...\n");
                 //textView.setText(textView.getText() + response + "\n");
                 parseJSONResponse(response);
             }
@@ -331,28 +324,34 @@ public class MapsActivity extends FragmentActivity
                 }
                 textView.append("parsing... " + stop_id + "\n");
                 Log.d(TAG, "parseJSONResponse: " + stop_id);
+
                 //Query the database to find which buses are in service at that stop.
                 Cursor cursor = routeDatabase.query(stop_id);
                 if(cursor != null) {
                     // Iterate through all returned items
                     while (cursor.moveToNext()) {
+                        // Pull out the information in the result set.
                         String routeNumber = cursor.getString(cursor.getColumnIndex(RouteDatabase.ROUTE_COLUMN_NAME));
                         String routeDirection = cursor.getString(cursor.getColumnIndex(RouteDatabase.DIRECTION_COLUMN_NAME));
+                        // Create a new routeStopModel object and add information requested from
+                        // the result set into the routeStopModel to form an intermediate
+                        // object.
                         RouteStopModel routeStopModel = new RouteStopModel();
                         routeStopModel.setRouteNumber(routeNumber);
                         routeStopModel.setDirection(routeDirection);
                         routeStopModel.setStopId(stop_id);
-                        //Pass the routeStopModel into the JsoupAsyncTask and
-                        //start requesting the real time.
-                        new JsoupAsyncTask(routeStopModel).execute();
                         busStops.add(routeStopModel);
                     }
                 }
             }
+            // If there is no error, i.e., there is at least one bus
+            // in the busStops list, then we execute the JsoupAsyncTask
+            // to request the bus arrival time
             if(busStops.size() != 0) {
-                for(RouteStopModel routeStopModel: busStops) {
-                    textView.append(routeStopModel.toString() + "\n");
-                }
+                // Pass the busStops list, along with the textView object
+                // into the JsoupAsyncTask and start requesting real time.
+                new JsoupAsyncTask(textView).execute(busStops.toArray(new RouteStopModel[busStops.size()]));
+                System.out.println("JSoupAsyncTask executed");
             } else {
                 textView.append("busStops size = 0 Error!");
             }

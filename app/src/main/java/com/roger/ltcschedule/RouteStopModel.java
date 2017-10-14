@@ -47,7 +47,8 @@ public class RouteStopModel {
 
     @Override
     public String toString() {
-        return stopId + " , " + routeNumber + " , " + direction + " , " + destination;
+        return stopId + " , " + routeNumber + " , " + direction + " , " + destination
+                + " , " + arrivalTime;
     }
 
 }
