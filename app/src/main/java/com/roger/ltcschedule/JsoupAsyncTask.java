@@ -97,7 +97,7 @@ public class JsoupAsyncTask extends AsyncTask<RouteStopModel, Void, List<RouteSt
             for(int i = 1; i < elements.size() - 1; i++) {
                 Element element = elements.get(i);
                 //Select the arrival time under the tr element
-                routeStopModel.setArrivalTime(element.select("td:nth-child(1) > a").text());
+                routeStopModel.addArrivalTime(element.select("td:nth-child(1) > a").text());
                 //Select the destination under the tr element
                 routeStopModel.setDestination(element.select("td:nth-child(2)").text().substring(2));
             }
@@ -124,7 +124,7 @@ public class JsoupAsyncTask extends AsyncTask<RouteStopModel, Void, List<RouteSt
             // i.e., there is another incoming bus, which yields
             // an arrival time not equal to null
             // Then we add it to the resultList to be displayed
-            if(routeStopModel.getArrivalTime() != null) {
+            if(!routeStopModel.isArrivalTimeEmpty()) {
                 resultList.add(routeStopModel);
             }
         }

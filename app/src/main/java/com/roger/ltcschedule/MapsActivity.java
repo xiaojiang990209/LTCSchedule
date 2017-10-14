@@ -314,11 +314,12 @@ public class MapsActivity extends FragmentActivity
                 //Get each bus stop
                 JSONObject bus_stop = jsonArray.getJSONObject(i);
                 //Acquire stop name
-                String stop_id = bus_stop.getString("name");
+                String stop_name = bus_stop.getString("name");
                 //If the stop name contains the stop id, then
                 //query the database to find time.
-                if(stop_id.contains("#")) {
-                    stop_id = stop_id.substring(stop_id.indexOf('#') + 1);
+                String stop_id = "";
+                if(stop_name.contains("#")) {
+                    stop_id = stop_name.substring(stop_name.indexOf('#') + 1);
                 } else {
                     continue;
                 }
@@ -340,6 +341,7 @@ public class MapsActivity extends FragmentActivity
                         routeStopModel.setRouteNumber(routeNumber);
                         routeStopModel.setDirection(routeDirection);
                         routeStopModel.setStopId(stop_id);
+                        routeStopModel.setStopName(stop_name);
                         busStops.add(routeStopModel);
                     }
                 }
