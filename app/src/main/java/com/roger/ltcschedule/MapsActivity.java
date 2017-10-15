@@ -13,10 +13,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -56,7 +57,9 @@ public class MapsActivity extends FragmentActivity
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-    private TextView textView;
+//    private TextView textView;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
     private Button executeFunctionsButton;
     private Marker mCurrLocationMarker;
     private Marker mSpecifiedLocationMarker;
@@ -68,7 +71,14 @@ public class MapsActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        textView = (TextView) findViewById(R.id.text);
+
+
+//        textView = (TextView) findViewById(R.id.text);
+        recyclerView = (RecyclerView) findViewById(R.id.arrival_times_list);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+
         executeFunctionsButton = (Button) findViewById(R.id.execte_functions_button);
         executeFunctionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,8 +86,12 @@ public class MapsActivity extends FragmentActivity
                 accessNearbyBusStops(mMap.getCameraPosition().target);
             }
         });
+
+
         routeDatabase = new RouteDatabase(this).createDatabase();
         busStops = new LinkedList<>();
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -109,7 +123,7 @@ public class MapsActivity extends FragmentActivity
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        textView.setText(textView.getText() + "onMapReady: \n");
+//        textView.setText(textView.getText() + "onMapReady: \n");
         mMap = googleMap;
 
         //Initialize Google Play services
@@ -137,7 +151,7 @@ public class MapsActivity extends FragmentActivity
                 if(snap - lastSnap < CAMERA_WAIT_THRESHOLD_TIME) {
                     return;
                 }
-                textView.setText(textView.getText() + "onCameraMove: " + mMap.getCameraPosition().target + "\n");
+//                textView.setText(textView.getText() + "onCameraMove: " + mMap.getCameraPosition().target + "\n");
                 //accessNearbyBusStops(mMap.getCameraPosition().target);
                 lastSnap = snap;
             }
@@ -217,8 +231,8 @@ public class MapsActivity extends FragmentActivity
     public void onLocationChanged(Location location) {
         //here mLastLocation = null on the first call to onLocationChanged
         if(mLastLocation != null) {
-            textView.setText(textView.getText() + "onLocationChanged: " + location.distanceTo(mLastLocation) + "\n");
-            textView.setText(textView.getText() + "mLastLocation accuracy: " + mLastLocation.getAccuracy() + "new location accuracy:" + location.getAccuracy() + "\n");
+//            textView.setText(textView.getText() + "onLocationChanged: " + location.distanceTo(mLastLocation) + "\n");
+//            textView.setText(textView.getText() + "mLastLocation accuracy: " + mLastLocation.getAccuracy() + "new location accuracy:" + location.getAccuracy() + "\n");
         }
 
         if(mCurrLocationMarker != null) {
@@ -239,7 +253,7 @@ public class MapsActivity extends FragmentActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        textView.append("onConnected:\n");
+        //textView.append("onConnected:\n");
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(1000);
@@ -268,7 +282,7 @@ public class MapsActivity extends FragmentActivity
         //Clear the List that contains previous query results so that
         // it can be populated with fresh new results.
         busStops.clear();
-        textView.append("on accessNearbyBusStops:" + "\n");
+        //textView.append("on accessNearbyBusStops:" + "\n");
         Log.d(TAG, "accessNearbyBusStops: ");
         RequestQueue queue = Volley.newRequestQueue(this);
 //        String url = "https://maps.googleapis.com/maps/api/place/search/json?sensor=false&radius=500&types=bus_station&location="
@@ -279,14 +293,14 @@ public class MapsActivity extends FragmentActivity
             //When hearing back from the server, parse the JSON response.
             @Override
             public void onResponse(String response) {
-                textView.append("Parsing json response...\n");
+                //textView.append("Parsing json response...\n");
                 //textView.setText(textView.getText() + response + "\n");
                 parseJSONResponse(response);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                textView.setText("That didnt work!");
+                //textView.setText("That didnt work!");
                 try {
                     Thread.sleep(3000);
                 }catch(InterruptedException e) {
@@ -303,7 +317,7 @@ public class MapsActivity extends FragmentActivity
     //      the objects RouteStopModel
     // parseJSONResponse: String -> List<RouteStopModel>
     private void parseJSONResponse(String response) {
-        textView.append("on parseJSONResponse: " + "\n");
+        //textView.append("on parseJSONResponse: " + "\n");
         Log.d(TAG, "parseJSONResponse: ");
         routeDatabase.open();
         try {
@@ -323,7 +337,7 @@ public class MapsActivity extends FragmentActivity
                 } else {
                     continue;
                 }
-                textView.append("parsing... " + stop_id + "\n");
+                //textView.append("parsing... " + stop_id + "\n");
                 Log.d(TAG, "parseJSONResponse: " + stop_id);
 
                 //Query the database to find which buses are in service at that stop.
@@ -352,10 +366,10 @@ public class MapsActivity extends FragmentActivity
             if(busStops.size() != 0) {
                 // Pass the busStops list, along with the textView object
                 // into the JsoupAsyncTask and start requesting real time.
-                new JsoupAsyncTask(textView).execute(busStops.toArray(new RouteStopModel[busStops.size()]));
+                new JsoupAsyncTask(recyclerView).execute(busStops.toArray(new RouteStopModel[busStops.size()]));
                 System.out.println("JSoupAsyncTask executed");
             } else {
-                textView.append("busStops size = 0 Error!");
+                //textView.append("busStops size = 0 Error!");
             }
         } catch(JSONException e) {
             e.printStackTrace();
@@ -364,10 +378,6 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
-    private void appendResultToTextView(List<RouteStopModel> routeStopModels) {
-        for(RouteStopModel routeStopModel : routeStopModels) {
-            textView.append(routeStopModel + "\n");
-        }
-    }
+
 
 }

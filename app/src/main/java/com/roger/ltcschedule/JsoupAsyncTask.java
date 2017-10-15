@@ -1,8 +1,8 @@
 package com.roger.ltcschedule;
 
 import android.os.AsyncTask;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -74,10 +74,10 @@ public class JsoupAsyncTask extends AsyncTask<RouteStopModel, Void, List<RouteSt
 
     private static final String TAG = "JsoupAsyncTask";
     private static final String urlStart = "http://www.ltconline.ca/WebWatch/Ada.aspx?";
-    private TextView resultTextView;
+    private RecyclerView resultRecyclerView;
 
-    public JsoupAsyncTask(TextView textView) {
-        resultTextView = textView;
+    public JsoupAsyncTask(RecyclerView recyclerView) {
+        resultRecyclerView = recyclerView;
     }
 
     private RouteStopModel parseInvididualModel(RouteStopModel routeStopModel) {
@@ -135,9 +135,8 @@ public class JsoupAsyncTask extends AsyncTask<RouteStopModel, Void, List<RouteSt
     protected void onPostExecute(List<RouteStopModel> result) {
         super.onPostExecute(result);
         System.out.println("JSoupAsyncTask finished");
-        for(RouteStopModel routeStopModel : result) {
-            resultTextView.append(routeStopModel.toString() + "\n");
-        }
-
+        RecyclerView.Adapter dataAdapter = new ArrivalTimeAdapter(result);
+        resultRecyclerView.setAdapter(dataAdapter);
+        dataAdapter.notifyDataSetChanged();
     }
 }
