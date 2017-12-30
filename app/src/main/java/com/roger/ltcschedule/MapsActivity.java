@@ -72,8 +72,7 @@ public class MapsActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-
-//        textView = (TextView) findViewById(R.id.text);
+        // Initialize the RecyclerView
         recyclerView = (RecyclerView) findViewById(R.id.arrival_times_list);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
