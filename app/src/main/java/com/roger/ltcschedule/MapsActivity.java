@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -52,6 +53,15 @@ public class MapsActivity extends FragmentActivity
         com.google.android.gms.location.LocationListener{
 
     private static final String TAG = "MapsActivity";
+    private static final String mapsUrl =
+            "https://maps.googleapis.com/maps/api/place/search/json?sensor=false&radius=1000&types=bus_station&location=";
+    private static final String apiKey =
+            "&key=AIzaSyDd6O3sJ2ql_7-FO0IH7ePvDy3wTOOpXLQ";
+    /*
+        Url for testing : alumniHallUrl
+     */
+    private static final String alumniHallUrl = "https://maps.googleapis.com/maps/api/place/search/json?sensor=false&radius=200&types=bus_station&location="
+            + 43.005986 + "," + -81.274747 + "&key=AIzaSyDd6O3sJ2ql_7-FO0IH7ePvDy3wTOOpXLQ";
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private LocationRequest mLocationRequest;
@@ -59,8 +69,8 @@ public class MapsActivity extends FragmentActivity
     private Location mLastLocation;
 //    private TextView textView;
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private Button executeFunctionsButton;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private DividerItemDecoration mDividerItemDecoration;
     private Marker mCurrLocationMarker;
     private Marker mSpecifiedLocationMarker;
     private RouteDatabase routeDatabase;
@@ -74,17 +84,15 @@ public class MapsActivity extends FragmentActivity
 
         // Initialize the RecyclerView
         recyclerView = (RecyclerView) findViewById(R.id.arrival_times_list);
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
+        mDividerItemDecoration = new DividerItemDecoration(
+                recyclerView.getContext(),
+                LinearLayoutManager.VERTICAL
+        );
+        recyclerView.addItemDecoration(mDividerItemDecoration);
 
 
-        executeFunctionsButton = (Button) findViewById(R.id.execte_functions_button);
-        executeFunctionsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                accessNearbyBusStops(mMap.getCameraPosition().target);
-            }
-        });
 
 
         routeDatabase = new RouteDatabase(this).createDatabase();
@@ -109,6 +117,11 @@ public class MapsActivity extends FragmentActivity
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
     }
+
+    /**
+     * Added swipe refresh layout
+     */
+
 
 
     /**
@@ -151,7 +164,7 @@ public class MapsActivity extends FragmentActivity
                     return;
                 }
 //                textView.setText(textView.getText() + "onCameraMove: " + mMap.getCameraPosition().target + "\n");
-                //accessNearbyBusStops(mMap.getCameraPosition().target);
+                accessNearbyBusStops(mMap.getCameraPosition().target);
                 lastSnap = snap;
             }
         });
@@ -281,19 +294,13 @@ public class MapsActivity extends FragmentActivity
         //Clear the List that contains previous query results so that
         // it can be populated with fresh new results.
         busStops.clear();
-        //textView.append("on accessNearbyBusStops:" + "\n");
         Log.d(TAG, "accessNearbyBusStops: ");
         RequestQueue queue = Volley.newRequestQueue(this);
-//        String url = "https://maps.googleapis.com/maps/api/place/search/json?sensor=false&radius=500&types=bus_station&location="
-//                + location.latitude + "," + location.longitude + "&key=AIzaSyDd6O3sJ2ql_7-FO0IH7ePvDy3wTOOpXLQ";
-        String url = "https://maps.googleapis.com/maps/api/place/search/json?sensor=false&radius=200&types=bus_station&location="
-                + 42.991399 + "," + -81.273297 + "&key=AIzaSyDd6O3sJ2ql_7-FO0IH7ePvDy3wTOOpXLQ";
+        String url = mapsUrl + location.latitude + "," + location.longitude + apiKey;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             //When hearing back from the server, parse the JSON response.
             @Override
             public void onResponse(String response) {
-                //textView.append("Parsing json response...\n");
-                //textView.setText(textView.getText() + response + "\n");
                 parseJSONResponse(response);
             }
         }, new Response.ErrorListener() {
@@ -346,7 +353,7 @@ public class MapsActivity extends FragmentActivity
                     while (cursor.moveToNext()) {
                         // Pull out the information in the result set.
                         String routeNumber = cursor.getString(cursor.getColumnIndex(RouteDatabase.ROUTE_COLUMN_NAME));
-                        String routeDirection = cursor.getString(cursor.getColumnIndex(RouteDatabase.DIRECTION_COLUMN_NAME));
+                        String routeDirection = cursor.getString(cursor.getColumnIndex(RouteDatabase.DIRECTION_COLUMN_NAME)).trim();
                         // Create a new routeStopModel object and add information requested from
                         // the result set into the routeStopModel to form an intermediate
                         // object.
@@ -355,7 +362,10 @@ public class MapsActivity extends FragmentActivity
                         routeStopModel.setDirection(routeDirection);
                         routeStopModel.setStopId(stop_id);
                         routeStopModel.setStopName(stop_name);
-                        busStops.add(routeStopModel);
+                        if (!isInList(busStops, routeStopModel)) {
+                            busStops.add(routeStopModel);
+                        }
+
                     }
                 }
             }
@@ -363,12 +373,10 @@ public class MapsActivity extends FragmentActivity
             // in the busStops list, then we execute the JsoupAsyncTask
             // to request the bus arrival time
             if(busStops.size() != 0) {
-                // Pass the busStops list, along with the textView object
+                // Pass the busStops list, along with the RecyclerView object
                 // into the JsoupAsyncTask and start requesting real time.
                 new JsoupAsyncTask(recyclerView).execute(busStops.toArray(new RouteStopModel[busStops.size()]));
                 System.out.println("JSoupAsyncTask executed");
-            } else {
-                //textView.append("busStops size = 0 Error!");
             }
         } catch(JSONException e) {
             e.printStackTrace();
@@ -377,6 +385,15 @@ public class MapsActivity extends FragmentActivity
         }
     }
 
+    private boolean isInList(List<RouteStopModel> list, RouteStopModel routeStopModel) {
+        for(RouteStopModel r: list) {
+            if (routeStopModel.getRouteNumber().equals(r.getRouteNumber()) &&
+                routeStopModel.getDirection().equals(r.getDirection())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 }

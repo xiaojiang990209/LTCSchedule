@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text = "20"
-        android:textSize="20sp"
+        android:textSize="32sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:gravity="center"/>
@@ -21,9 +21,10 @@
         android:layout_alignLeft="@id/route_number"
         android:layout_alignStart="@id/route_number"
         android:text = "Fanshawe College via Downtown"
-        android:textSize="11sp"
+        android:textSize="18sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
+        android:layout_marginLeft="-4dp"
         android:gravity="center"/>
 
     <TextView
@@ -31,10 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/route_destination"
-        android:layout_alignLeft="@id/route_destination"
-        android:layout_marginTop="5dp"
+        android:layout_alignLeft="@id/route_number"
+        android:layout_marginTop="3dp"
         android:text="Platts Lane and Cherryhill Pl SB - #1390"
-        android:textSize="8sp"
+        android:textSize="12sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
         android:gravity="center"
@@ -56,9 +57,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/arrival_time_1"
+        android:layout_marginTop="5dp"
         android:text = "12:09 P.M."
         android:textColor="#FFFFFF"
-        android:textSize="10sp"/>
+        android:textSize="12sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/arrival_time_3"
@@ -66,8 +69,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/arrival_time_2"
+        android:layout_marginTop="7dp"
         android:text=""
-        android:textSize="10sp"
-        android:textColor="#FFFFFF"/>
+        android:textSize="12sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"/>
 
 </RelativeLayout>

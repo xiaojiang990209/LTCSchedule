@@ -32,11 +32,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_weight="1.0">
-        <Button
-            android:id="@+id/execte_functions_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Click me to run functions"/>
         <!--<ScrollView-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="match_parent">-->
@@ -46,11 +41,16 @@
                 <!--android:id="@+id/text"-->
                 <!--android:text="Hello Maps!"/>-->
         <!--</ScrollView>-->
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/arrival_times_list"
+        <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:id="@+id/swipe_refresh_layout">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/arrival_times_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </android.support.v4.widget.SwipeRefreshLayout>
+
 
     </LinearLayout>
 
