@@ -1,6 +1,7 @@
 package com.roger.ltcschedule;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ArrivalTimeAdapter extends RecyclerView.Adapter<ArrivalTimeAdapter.ViewHolder> {
 
     private List<RouteStopModel> mDataSet;
+    private static String TAG = "ArrivalTimeAdapter";
 
     // Provides a reference to the views for each data item
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -60,9 +62,14 @@ public class ArrivalTimeAdapter extends RecyclerView.Adapter<ArrivalTimeAdapter.
         holder.routeNumberTextView.setText(routeStopModel.getRouteNumber());
         holder.routeDestinationTextView.setText(routeStopModel.getDestination());
         holder.stopNameTextView.setText(routeStopModel.getStopName());
+        System.out.println(TAG + ", " + routeStopModel.getRouteNumber() + ", "
+                + routeStopModel.getDestination() + ", size = " + routeStopModel.getArrivalTime().size());
         for(int i = 0; i < routeStopModel.getArrivalTime().size(); i++) {
+            System.out.println(TAG + ", " + routeStopModel.getArrivalTime().get(i));
             holder.arrivalTimeTextViews[i].
                     setText(routeStopModel.getArrivalTime().get(i));
+            // Fix occasional IndexOutOfBounds Exception
+            if (i >= 3) break;
         }
     }
 

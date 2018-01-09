@@ -36,6 +36,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -62,12 +63,13 @@ public class MapsActivity extends FragmentActivity
      */
     private static final String alumniHallUrl = "https://maps.googleapis.com/maps/api/place/search/json?sensor=false&radius=200&types=bus_station&location="
             + 43.005986 + "," + -81.274747 + "&key=AIzaSyDd6O3sJ2ql_7-FO0IH7ePvDy3wTOOpXLQ";
+    private LatLng ALUMNI_HALL = new LatLng(43.005986, -81.274747);
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private GoogleMap mMap;
     private SupportMapFragment mapFragment;
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
-//    private TextView textView;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private DividerItemDecoration mDividerItemDecoration;
@@ -168,6 +170,12 @@ public class MapsActivity extends FragmentActivity
                 lastSnap = snap;
             }
         });
+
+        /**
+         * Just for testing purposes, set camera location to alumni hall
+         */
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(ALUMNI_HALL));
+
     }
 
     // buildGoogleApiClient() creates a google api client and connects it.
@@ -181,7 +189,6 @@ public class MapsActivity extends FragmentActivity
         mGoogleApiClient.connect();
     }
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     // checkLocationPermission() checks if the application is granted with the permission to access location
     // checkLocationPermisson(): Void -> Bool
     public boolean checkLocationPermission() {
@@ -297,7 +304,7 @@ public class MapsActivity extends FragmentActivity
         Log.d(TAG, "accessNearbyBusStops: ");
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = mapsUrl + location.latitude + "," + location.longitude + apiKey;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, alumniHallUrl, new Response.Listener<String>() {
             //When hearing back from the server, parse the JSON response.
             @Override
             public void onResponse(String response) {

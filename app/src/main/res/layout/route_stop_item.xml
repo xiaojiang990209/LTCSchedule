@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:padding="10dp" android:background="#4F2683">
+    android:padding="10dp" android:background="#124da9">
 
     <TextView
         android:id="@+id/route_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text = "20"
-        android:textSize="32sp"
+        android:textSize="26sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:typeface="sans"
+        android:gravity="center"
+        android:fontFamily="sans-serif-black"/>
 
     <TextView
         android:id="@+id/route_destination"
@@ -20,11 +22,14 @@
         android:layout_below="@id/route_number"
         android:layout_alignLeft="@id/route_number"
         android:layout_alignStart="@id/route_number"
-        android:text = "Fanshawe College via Downtown"
-        android:textSize="18sp"
+        android:text = " Fanshawe College via Downtown"
+        android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
+        android:typeface="sans"
+        android:fontFamily="sans-serif-black"
         android:layout_marginLeft="-4dp"
+        android:layout_marginStart="-4dp"
         android:gravity="center"/>
 
     <TextView
@@ -33,11 +38,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/route_destination"
         android:layout_alignLeft="@id/route_number"
+        android:layout_alignStart="@id/route_number"
         android:layout_marginTop="3dp"
-        android:text="Platts Lane and Cherryhill Pl SB - #1390"
+        android:fontFamily="sans-serif-black"
+        android:text=""
         android:textSize="12sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
+        android:typeface="sans"
         android:gravity="center"
         />
 
@@ -46,33 +54,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text = "11:56 P.M."
+        android:layout_alignParentEnd="true"
+        android:fontFamily="sans-serif-black"
+        android:text = ""
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:typeface="sans"/>
 
     <TextView
         android:id="@+id/arrival_time_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/arrival_time_1"
         android:layout_marginTop="5dp"
-        android:text = "12:09 P.M."
+        android:fontFamily="sans-serif-black"
+        android:text = ""
         android:textColor="#FFFFFF"
         android:textSize="12sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:typeface="sans"/>
 
     <TextView
         android:id="@+id/arrival_time_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@id/arrival_time_2"
         android:layout_marginTop="7dp"
+        android:fontFamily="sans-serif-black"
         android:text=""
         android:textSize="12sp"
         android:textColor="#FFFFFF"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:typeface="sans"/>
 
 </RelativeLayout>

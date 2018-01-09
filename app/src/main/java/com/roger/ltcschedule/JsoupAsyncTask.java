@@ -101,7 +101,7 @@ public class JsoupAsyncTask extends AsyncTask<RouteStopModel, Void, List<RouteSt
                 //Select the destination under the tr element
                 routeStopModel.setDestination(element.select("td:nth-child(2)").text().substring(2));
             }
-            System.out.println(TAG + ":" + routeStopModel.toString());
+            //System.out.println(TAG + ":" + routeStopModel.toString());
         } catch (IOException e) {
             Log.e(TAG, "doInBackground: " + e.toString());
         }
